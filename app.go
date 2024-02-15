@@ -1,4 +1,4 @@
-package socialmediaapi
+package main
 
 import (
 	"github.com/gin-gonic/gin"
@@ -13,4 +13,6 @@ func main() {
 	v1 := r.Group("/api")
 
 	users.Register(v1.Group("/users"))
+
+	r.Run("localhost:5000")
 }
