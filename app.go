@@ -10,7 +10,7 @@ func main() {
 
 	r := gin.Default()
 
-	v1 := r.Group("/api")
+	v1 := r.Group("/api/v1")
 
 	users.Register(v1.Group("/users"))
 
