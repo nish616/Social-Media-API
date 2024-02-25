@@ -11,10 +11,6 @@ func (ul *UserList) get(id uint32) User {
 	return res
 }
 
-func (ul *UserList) add(u User) {
-
-}
-
 func (ul *UserList) update(id uint32, email string) User {
 	var res User
 	for i, user := range *ul {
