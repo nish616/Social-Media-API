@@ -8,12 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type User struct {
-	Id       int64
-	Username string
-	Email    string
-}
-
 type UserList []User
 
 var userList UserList
@@ -39,31 +33,28 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	counter += 1
-
 	var user User
-	user.Id = int64(counter)
 	user.Username = userInput.Username
 	user.Email = userInput.Email
 
-	userList.add(user)
+	user.Create()
 
 	c.JSON(http.StatusCreated, user)
-	return
+
 }
 
 func Get(c *gin.Context) {
 
 	idParam := c.Param("id")
 
-	id, err := strconv.ParseInt(idParam, 10, 64)
+	id, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	response := userList.get(id)
+	response := userList.get(uint32(id))
 
 	c.JSON(http.StatusOK, response)
 	return
@@ -73,7 +64,7 @@ func Update(c *gin.Context) {
 
 	idParam := c.Param("id")
 
-	id, err := strconv.ParseInt(idParam, 10, 64)
+	id, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
 		fmt.Println("users/Update Error: ", err)
 		c.JSON(http.StatusBadRequest, err)
@@ -86,7 +77,7 @@ func Update(c *gin.Context) {
 
 	c.Bind(&userUpdateInput)
 
-	response := userList.update(id, userUpdateInput.Email)
+	response := userList.update(uint32(id), userUpdateInput.Email)
 
 	fmt.Println(userList)
 
@@ -97,14 +88,14 @@ func Update(c *gin.Context) {
 func Delete(c *gin.Context) {
 	idParam := c.Param("id")
 
-	id, err := strconv.ParseInt(idParam, 10, 64)
+	id, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
 		fmt.Println("users/Delete Error: ", err)
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	userList.delete(id)
+	userList.delete(uint32(id))
 
 	c.JSON(http.StatusOK, "success")
 	return
