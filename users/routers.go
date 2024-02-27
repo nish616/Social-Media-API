@@ -12,8 +12,6 @@ type UserList []User
 
 var userList UserList
 
-var counter int = 0
-
 func Register(router *gin.RouterGroup) {
 	router.POST("/", Create)
 	router.GET("/:id", Get)
@@ -37,7 +35,7 @@ func Create(c *gin.Context) {
 	user.Username = userInput.Username
 	user.Email = userInput.Email
 
-	user.Create()
+	user.CreateUser()
 
 	c.JSON(http.StatusCreated, user)
 
@@ -47,16 +45,18 @@ func Get(c *gin.Context) {
 
 	idParam := c.Param("id")
 
-	id, err := strconv.ParseUint(idParam, 10, 32)
+	id, err := strconv.ParseUint(idParam, 10, 64)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	response := userList.get(uint32(id))
+	var user User
 
-	c.JSON(http.StatusOK, response)
+	user.GetUser(id)
+
+	c.JSON(http.StatusOK, user)
 	return
 }
 
@@ -64,7 +64,7 @@ func Update(c *gin.Context) {
 
 	idParam := c.Param("id")
 
-	id, err := strconv.ParseUint(idParam, 10, 32)
+	id, err := strconv.ParseUint(idParam, 10, 64)
 	if err != nil {
 		fmt.Println("users/Update Error: ", err)
 		c.JSON(http.StatusBadRequest, err)
@@ -75,27 +75,38 @@ func Update(c *gin.Context) {
 		Email string
 	}
 
+	var user User
+
+	fetchResult := user.GetUser(id)
+	if fetchResult == 0 {
+		c.JSON(http.StatusOK, "User not found")
+		return
+	}
+
 	c.Bind(&userUpdateInput)
 
-	response := userList.update(uint32(id), userUpdateInput.Email)
+	user.Email = userUpdateInput.Email
 
-	fmt.Println(userList)
+	user.UpdateUser()
 
-	c.JSON(http.StatusOK, response)
-	return
+	c.JSON(http.StatusOK, user)
 }
 
 func Delete(c *gin.Context) {
 	idParam := c.Param("id")
 
-	id, err := strconv.ParseUint(idParam, 10, 32)
+	id, err := strconv.ParseUint(idParam, 10, 64)
 	if err != nil {
 		fmt.Println("users/Delete Error: ", err)
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	userList.delete(uint32(id))
+	var user User
+
+	user.GetUser(id)
+
+	user.DeleteUser()
 
 	c.JSON(http.StatusOK, "success")
 	return
