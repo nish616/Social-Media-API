@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserList []User
-
-var userList UserList
-
 func Register(router *gin.RouterGroup) {
 	router.POST("/", Create)
 	router.GET("/:id", Get)
@@ -57,7 +53,6 @@ func Get(c *gin.Context) {
 	user.GetUser(id)
 
 	c.JSON(http.StatusOK, user)
-	return
 }
 
 func Update(c *gin.Context) {
@@ -109,5 +104,4 @@ func Delete(c *gin.Context) {
 	user.DeleteUser()
 
 	c.JSON(http.StatusOK, "success")
-	return
 }
