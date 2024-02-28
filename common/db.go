@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -10,7 +11,12 @@ import (
 var DB *gorm.DB
 
 func Init() *gorm.DB {
-	dsn := "host=localhost user=postgres password=postgres dbname=SocialMediaApp port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	DB_NAME := os.Getenv("DB_NAME")
+	DB_PORT := os.Getenv("DB_PORT")
+	DB_USER := os.Getenv("DB_USER")
+	DB_PASS := os.Getenv("DB_PASS")
+
+	dsn := "host=localhost user=" + DB_USER + " password=" + DB_PASS + " dbname=" + DB_NAME + " port=" + DB_PORT + " sslmode=disable TimeZone=Asia/Shanghai"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		fmt.Println("DB connect error: ", err)
